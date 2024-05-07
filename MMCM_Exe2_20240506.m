@@ -1,10 +1,10 @@
 clc;
 
 L = 1; % For space interval [0,L]
-T = 1; % For time interval [0,T]
-nL = 200; % For nL spaces in array Xs
-nT = 500; %For nT spaces in array Ts
-k = 15;  % Some integer k
+T = 5; % For time interval [0,T]
+nL = 1000; % For nL spaces in array Xs
+nT = 100; %For nT spaces in array Ts
+k = 5;  % Some integer k
 w = -15; % Some integer w
 
 
@@ -30,7 +30,7 @@ Fs = f(Xs);
 
 % ----- DOWNWIND METHOD -----
 
-% (Time) Array representing the center of n intervals of lentgh T/nT
+% (Time) Array representing the center of n intervals of length T/nT
 aux = linspace(0,T,nT+1);
 Ts = zeros(1,nT);
     for i = 1:nT
@@ -58,7 +58,7 @@ end
 
 figure(1);
 plot(Xs, Fs);
-title('Aproximation via "Downwind method" of the function $\sin((2k\pi x)/L-t);$', 'interpreter', 'latex', 'FontSize', 14);
+title('Aproximation via "Downwind method" of $\sin((2k\pi x)/L-t), \Delta t = 10^{-2}, \Delta x = 10^{-3}$', 'interpreter', 'latex', 'FontSize', 14);
 
 
 % ----- UPWIND METHOD -----
@@ -79,7 +79,7 @@ end
 
 figure(2);
 plot(Xs, Fs);
-title('Aproximation via "Upwind method" of te function $\sin((2k\pi x)/L-t);$', 'interpreter', 'latex', 'FontSize', 14);
+title('Aproximation via "Upwind method" of $\sin((2k\pi x)/L-t), \Delta t = 10^{-2}, \Delta x = 10^{-3}$', 'interpreter', 'latex', 'FontSize', 14);
 
 
 % ----- CENTRAL METHOD -----
@@ -104,6 +104,35 @@ end
 
 figure(3);
 plot(Xs, Fs);
-title('Aproximation via "Central method" of te function $\sin((2k\pi x)/L-t);$', 'interpreter', 'latex', 'FontSize', 14);
+title('Aproximation via "Central method" of $\sin((2k\pi x)/L-t), \Delta t = 10^{-2}, \Delta x = 10^{-3}$', 'interpreter', 'latex', 'FontSize', 14);
 
+% upwind for different values of ∆x and ∆t
+fig_count = 4;
+for nL = [100, 1000, 10000]
+    aux = linspace(0,L,nL+1);
+    Xs = linspace(0,L,nL);
+    for i = 1:nL
+        Xs(i) = (aux(i)+aux(i+1))/2;
+    end 
+    dx = Xs(2) - Xs(1);
 
+    for nT = [100, 1000, 10000]
+
+        Fs = f(Xs);
+        aux = Fs;
+        dt = T/nT;
+        % implementation of the upwind method with constant c = 1
+        for j = 1:nT
+            for i = 2:nL
+                Fs(i) = aux(i) - (dt/dx)*(aux(i)-aux(i-1));
+            end
+        
+            Fs(1) = Fs(nL); % periodic boundary condition
+        end
+
+        figure(fig_count)
+        plot(Xs, Fs);
+        fig_count = fig_count + 1;
+        title(['∆t = ', num2str(dt), ' ∆x = ', num2str(dx)])
+    end
+end
