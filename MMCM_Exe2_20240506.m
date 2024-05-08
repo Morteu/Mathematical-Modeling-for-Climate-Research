@@ -133,6 +133,6 @@ for nL = [100, 1000, 10000]
         figure(fig_count)
         plot(Xs, Fs);
         fig_count = fig_count + 1;
-        title(['∆t = ', num2str(dt), ' ∆x = ', num2str(dx)])
+        title(['∆t = ', num2str(dt), ' ∆x = ', num2str(dx)], 'FontSize', 14)
     end
 end
